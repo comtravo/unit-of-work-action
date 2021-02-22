@@ -2,10 +2,18 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  milliseconds: # change this
-    required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  build:
+    description: 'run make build'
+    default: true
+  lint:
+    description: 'run make lint-docker'
+    default: true
+  test:
+    description: 'run make test-docker'
+    default: true
+  push:
+    description: 'push to docker registry'
+    default: true
 runs:
   using: 'node12'
   main: 'dist/index.js'

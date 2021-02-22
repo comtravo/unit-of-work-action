@@ -1,16 +1,37 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as exec from '@actions/exec'
 
-async function run(): Promise<void> {
+async function executeOperation(operation: string): Promise<void> {
+  core.info(`executing ${operation}`)
+  core.startGroup(`${operation}`)
+
+  await exec.exec(`make ${operation}`)
+
+  core.endGroup()
+}
+
+export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    const build: boolean = core.getInput('build') === 'true'
+    const lint: boolean = core.getInput('lint') === 'true'
+    const test: boolean = core.getInput('test') === 'true'
+    const push: boolean = core.getInput('push') === 'true'
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    process.env.CT_BUILD_ENVIRONMENT = 'ct-jenkins'
 
-    core.setOutput('time', new Date().toTimeString())
+    if (build) {
+      await executeOperation('build')
+    }
+
+    if (lint) {
+      await executeOperation('lint')
+    }
+    if (test) {
+      await executeOperation('test')
+    }
+    if (push) {
+      await executeOperation('push')
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
