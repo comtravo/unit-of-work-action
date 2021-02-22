@@ -4,7 +4,7 @@ import * as exec from '@actions/exec'
 import {run} from '../src/main'
 
 describe('run tests', () => {
-  beforeEach(()=> {
+  beforeEach(() => {
     process.env.INPUT_BUILD = 'true'
     process.env.INPUT_LINT = 'true'
     process.env.INPUT_TEST = 'true'
