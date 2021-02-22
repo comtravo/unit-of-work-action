@@ -10,6 +10,10 @@ async function executeOperation(operation: string): Promise<void> {
   core.endGroup()
 }
 
+async function installDeps(): Promise<number> {
+  return exec.exec(`pip3 install boto3 yq`)
+}
+
 export async function run(): Promise<void> {
   try {
     const build: boolean = core.getInput('build') === 'true'
@@ -30,6 +34,7 @@ export async function run(): Promise<void> {
       await executeOperation('test')
     }
     if (push) {
+      await installDeps()
       await executeOperation('push')
     }
   } catch (error) {
