@@ -1,19 +1,23 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'unit-of-work-action'
+description: 'execute make targets build test-docker lint-docker and push'
+author: 'Comtravo'
 inputs:
   build:
+    required: false
     description: 'run make build'
-    default: true
+    default: "true"
   lint:
+    required: false
     description: 'run make lint-docker'
-    default: true
+    default: "true"
   test:
+    required: false
     description: 'run make test-docker'
-    default: true
+    default: "true"
   push:
+    required: false
     description: 'push to docker registry'
-    default: true
+    default: "true"
 runs:
   using: 'node12'
   main: 'dist/index.js'
