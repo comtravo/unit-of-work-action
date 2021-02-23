@@ -1,7 +1,7 @@
 jest.mock('@actions/exec')
 
 import * as exec from '@actions/exec'
-import {run} from '../src/main'
+import {run, setEnvironmentVariables} from '../src/main'
 
 describe('run tests', () => {
   beforeEach(() => {
@@ -22,7 +22,7 @@ describe('run tests', () => {
   })
 
   test('should set the docker friendly branch name as docker tag when branch is not master', async () => {
-    await run()
+    setEnvironmentVariables()
     expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual(
       'lorem_ipsum_foo+bar'
     )
@@ -31,8 +31,24 @@ describe('run tests', () => {
   test('should set the docker tag as latest when branch is master', async () => {
     process.env.GITHUB_REF = 'refs/heads/master'
 
-    await run()
+    setEnvironmentVariables()
     expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual('latest')
+  })
+
+  test('should throw exception when GITHUB_REF is not prefixed by refs/heads/', async () => {
+    process.env.GITHUB_REF = 'master'
+
+    expect(setEnvironmentVariables).toThrowError(
+      /unable to determine branch name/
+    )
+  })
+
+  test('should throw exception when unable to determine docker tag from branch name', async () => {
+    delete process.env.GITHUB_REF
+
+    expect(setEnvironmentVariables).toThrowError(
+      /GITHUB_REF environment variable not set/
+    )
   })
 
   test('should build, lint, test, push when all options provided', async () => {
@@ -42,6 +58,10 @@ describe('run tests', () => {
     expect(exec.exec).toHaveBeenNthCalledWith(2, 'make lint')
     expect(exec.exec).toHaveBeenNthCalledWith(3, 'make test')
     expect(exec.exec).toHaveBeenNthCalledWith(4, 'make push')
+
+    expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual(
+      'lorem_ipsum_foo+bar'
+    )
   })
 
   test('should build and push when only build and push is true', async () => {

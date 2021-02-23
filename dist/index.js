@@ -36,7 +36,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = exports.setEnvironmentVariables = void 0;
 const core = __importStar(__webpack_require__(186));
 const exec = __importStar(__webpack_require__(514));
 function executeOperation(operation) {
@@ -47,6 +47,24 @@ function executeOperation(operation) {
         core.endGroup();
     });
 }
+function setEnvironmentVariables() {
+    if (process.env.GITHUB_REF === 'refs/heads/master') {
+        process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest';
+    }
+    else {
+        const ref = process.env.GITHUB_REF;
+        if (!ref) {
+            throw new Error('GITHUB_REF environment variable not set');
+        }
+        const branchName = ref.split('refs/heads/')[1];
+        if (!branchName) {
+            throw new Error('unable to determine branch name');
+        }
+        const dockerFriendlyGitBranchName = branchName.replace('/', '_');
+        process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = dockerFriendlyGitBranchName;
+    }
+}
+exports.setEnvironmentVariables = setEnvironmentVariables;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -54,7 +72,7 @@ function run() {
             const lint = core.getInput('lint') === 'true';
             const test = core.getInput('test') === 'true';
             const push = core.getInput('push') === 'true';
-            process.env.CT_BUILD_ENVIRONMENT = 'ct-jenkins';
+            setEnvironmentVariables();
             if (build) {
                 yield executeOperation('build');
             }

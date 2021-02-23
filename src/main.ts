@@ -10,17 +10,23 @@ async function executeOperation(operation: string): Promise<void> {
   core.endGroup()
 }
 
-function setEnvironmentVariables(): void {
+export function setEnvironmentVariables(): void {
   if (process.env.GITHUB_REF === 'refs/heads/master') {
     process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest'
   } else {
-    const ref = process.env.GITHUB_REF as string
+    const ref = process.env.GITHUB_REF
+
+    if (!ref) {
+      throw new Error('GITHUB_REF environment variable not set')
+    }
+
     const branchName = ref.split('refs/heads/')[1]
-    const dockerFriendlyGitBranchName = branchName.replace('/', '_')
 
     if (!branchName) {
       throw new Error('unable to determine branch name')
     }
+
+    const dockerFriendlyGitBranchName = branchName.replace('/', '_')
     process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = dockerFriendlyGitBranchName
   }
 }
