@@ -1,11 +1,14 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 
-async function executeOperation(operation: string): Promise<void> {
+async function executeOperation(
+  makeDir: string,
+  operation: string
+): Promise<void> {
   core.info(`executing ${operation}`)
   core.startGroup(`${operation}`)
 
-  await exec.exec(`make ${operation}`)
+  await exec.exec(`make -C ${makeDir} ${operation}`)
 
   core.endGroup()
 }
@@ -36,21 +39,22 @@ export async function run(): Promise<void> {
     const lint: boolean = core.getInput('lint') === 'true'
     const test: boolean = core.getInput('test') === 'true'
     const push: boolean = core.getInput('push') === 'true'
+    const makeDir: string = core.getInput('makeDir')
 
     setEnvironmentVariables()
 
     if (build) {
-      await executeOperation('build')
+      await executeOperation(makeDir, 'build')
     }
 
     if (lint) {
-      await executeOperation('lint')
+      await executeOperation(makeDir, 'lint')
     }
     if (test) {
-      await executeOperation('test')
+      await executeOperation(makeDir, 'test')
     }
     if (push) {
-      await executeOperation('push')
+      await executeOperation(makeDir, 'push')
     }
   } catch (error) {
     core.setFailed(error.message)

@@ -12,6 +12,7 @@ describe('run tests', () => {
     process.env.INPUT_LINT = 'true'
     process.env.INPUT_TEST = 'true'
     process.env.INPUT_PUSH = 'true'
+    process.env.INPUT_MAKEDIR = '.'
   })
 
   afterEach(() => {
@@ -49,10 +50,10 @@ describe('run tests', () => {
   test('should build, lint, test, push when all options provided', async () => {
     await run()
     expect(exec.exec).toHaveBeenCalledTimes(4)
-    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make build')
-    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make lint')
-    expect(exec.exec).toHaveBeenNthCalledWith(3, 'make test')
-    expect(exec.exec).toHaveBeenNthCalledWith(4, 'make push')
+    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make -C . build')
+    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make -C . lint')
+    expect(exec.exec).toHaveBeenNthCalledWith(3, 'make -C . test')
+    expect(exec.exec).toHaveBeenNthCalledWith(4, 'make -C . push')
 
     expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual(
       'lorem_ipsum_foo+bar'
@@ -65,8 +66,8 @@ describe('run tests', () => {
 
     await run()
     expect(exec.exec).toHaveBeenCalledTimes(2)
-    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make build')
-    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make push')
+    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make -C . build')
+    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make -C . push')
   })
 
   test('should build, lint and push when only build and push is true', async () => {
@@ -74,9 +75,9 @@ describe('run tests', () => {
 
     await run()
     expect(exec.exec).toHaveBeenCalledTimes(3)
-    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make build')
-    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make test')
-    expect(exec.exec).toHaveBeenNthCalledWith(3, 'make push')
+    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make -C . build')
+    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make -C . test')
+    expect(exec.exec).toHaveBeenNthCalledWith(3, 'make -C . push')
   })
 
   test('should build, test and push when only build and push is true', async () => {
@@ -84,9 +85,9 @@ describe('run tests', () => {
 
     await run()
     expect(exec.exec).toHaveBeenCalledTimes(3)
-    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make build')
-    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make lint')
-    expect(exec.exec).toHaveBeenNthCalledWith(3, 'make push')
+    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make -C . build')
+    expect(exec.exec).toHaveBeenNthCalledWith(2, 'make -C . lint')
+    expect(exec.exec).toHaveBeenNthCalledWith(3, 'make -C . push')
   })
 
   test('should build when only buildis true', async () => {
@@ -96,6 +97,6 @@ describe('run tests', () => {
 
     await run()
     expect(exec.exec).toHaveBeenCalledTimes(1)
-    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make build')
+    expect(exec.exec).toHaveBeenNthCalledWith(1, 'make -C . build')
   })
 })

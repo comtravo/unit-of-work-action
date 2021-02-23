@@ -39,11 +39,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = exports.setEnvironmentVariables = void 0;
 const core = __importStar(__webpack_require__(186));
 const exec = __importStar(__webpack_require__(514));
-function executeOperation(operation) {
+function executeOperation(makeDir, operation) {
     return __awaiter(this, void 0, void 0, function* () {
         core.info(`executing ${operation}`);
         core.startGroup(`${operation}`);
-        yield exec.exec(`make ${operation}`);
+        yield exec.exec(`make -C ${makeDir} ${operation}`);
         core.endGroup();
     });
 }
@@ -70,18 +70,19 @@ function run() {
             const lint = core.getInput('lint') === 'true';
             const test = core.getInput('test') === 'true';
             const push = core.getInput('push') === 'true';
+            const makeDir = core.getInput('makeDir');
             setEnvironmentVariables();
             if (build) {
-                yield executeOperation('build');
+                yield executeOperation(makeDir, 'build');
             }
             if (lint) {
-                yield executeOperation('lint');
+                yield executeOperation(makeDir, 'lint');
             }
             if (test) {
-                yield executeOperation('test');
+                yield executeOperation(makeDir, 'test');
             }
             if (push) {
-                yield executeOperation('push');
+                yield executeOperation(makeDir, 'push');
             }
         }
         catch (error) {

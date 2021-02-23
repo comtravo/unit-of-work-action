@@ -18,6 +18,10 @@ inputs:
     required: false
     description: 'push to docker registry'
     default: "true"
+  makeDir:
+    required: false
+    description: 'dir to execute make commands'
+    default: "."
 runs:
   using: 'node12'
   main: 'dist/index.js'
