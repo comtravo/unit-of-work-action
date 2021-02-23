@@ -18,7 +18,7 @@ jobs:
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     env:
-      GITHUB_REF: '/refs/heads/this'
+      GITHUB_REF: refs/heads/this
     steps:
       - uses: actions/checkout@v2
       - uses: ./
