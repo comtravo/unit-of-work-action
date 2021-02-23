@@ -5,7 +5,7 @@ import {run, setEnvironmentVariables} from '../src/main'
 
 describe('run tests', () => {
   beforeEach(() => {
-    process.env.GITHUB_HEAD_REF = 'refs/heads/lorem/ipsum_foo+bar'
+    process.env.GITHUB_HEAD_REF = 'lorem/ipsum_foo+bar'
     process.env.INPUT_BUILD = 'true'
     process.env.INPUT_LINT = 'true'
     process.env.INPUT_TEST = 'true'
@@ -29,25 +29,11 @@ describe('run tests', () => {
     )
   })
 
-  test('should set the docker friendly branch name as docker tag when branch is not master', async () => {
-    process.env.GITHUB_HEAD_REF = 'refs/heads/this'
-    setEnvironmentVariables()
-    expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual('this')
-  })
-
   test('should set the docker tag as latest when branch is master', async () => {
     process.env.GITHUB_REF = 'refs/heads/master'
 
     setEnvironmentVariables()
     expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual('latest')
-  })
-
-  test('should throw exception when GITHUB_HEAD_REF is not prefixed by refs/heads/', async () => {
-    process.env.GITHUB_HEAD_REF = 'foo'
-
-    expect(setEnvironmentVariables).toThrowError(
-      /unable to determine branch name/
-    )
   })
 
   test('should throw exception when unable to determine docker tag from branch name', async () => {

@@ -16,18 +16,10 @@ export function setEnvironmentVariables(): void {
   if (process.env.GITHUB_REF === 'refs/heads/master') {
     process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest'
   } else {
-    const ref = process.env.GITHUB_HEAD_REF
-
-    if (!ref) {
-      throw new Error('GITHUB_HEAD_REF environment variable not set')
-    }
-
-    const branchName = ref.split('refs/heads/')[1]
+    const branchName = process.env.GITHUB_HEAD_REF
 
     if (!branchName) {
-      throw new Error(
-        `unable to determine branch name, GITHUB_HEAD_REF: ${ref}`
-      )
+      throw new Error('GITHUB_HEAD_REF environment variable not set')
     }
 
     const dockerFriendlyGitBranchName = branchName.replace('/', '_')
