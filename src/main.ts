@@ -14,8 +14,6 @@ async function executeOperation(
 }
 
 export function setEnvironmentVariables(): void {
-  core.info(`current environment variables: ${JSON.stringify(process.env)}`)
-
   if (
     process.env.GITHUB_REF === 'refs/heads/master' ||
     process.env.GITHUB_REF === 'refs/heads/main'
