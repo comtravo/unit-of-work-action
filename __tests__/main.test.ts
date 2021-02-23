@@ -31,9 +31,7 @@ describe('run tests', () => {
   test('should set the docker friendly branch name as docker tag when branch is not master', async () => {
     process.env.GITHUB_REF = 'refs/heads/this'
     setEnvironmentVariables()
-    expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual(
-      'this'
-    )
+    expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual('this')
   })
 
   test('should set the docker tag as latest when branch is master', async () => {

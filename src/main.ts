@@ -11,7 +11,7 @@ async function executeOperation(operation: string): Promise<void> {
 }
 
 export function setEnvironmentVariables(): void {
-  core.info(`current environment variables: ${process.env}`)
+  core.info(`current environment variables: ${JSON.stringify(process.env)}`)
 
   if (process.env.GITHUB_REF === 'refs/heads/master') {
     process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest'
