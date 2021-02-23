@@ -10,6 +10,21 @@ async function executeOperation(operation: string): Promise<void> {
   core.endGroup()
 }
 
+function setEnvironmentVariables(): void {
+  if (process.env.GITHUB_REF === 'refs/heads/master') {
+    process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest'
+  } else {
+    const ref = process.env.GITHUB_REF as string
+    const branchName = ref.split('refs/heads/')[1]
+    const dockerFriendlyGitBranchName = branchName.replace('/', '_')
+
+    if (!branchName) {
+      throw new Error('unable to determine branch name')
+    }
+    process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = dockerFriendlyGitBranchName
+  }
+}
+
 export async function run(): Promise<void> {
   try {
     const build: boolean = core.getInput('build') === 'true'
@@ -17,7 +32,7 @@ export async function run(): Promise<void> {
     const test: boolean = core.getInput('test') === 'true'
     const push: boolean = core.getInput('push') === 'true'
 
-    process.env.CT_BUILD_ENVIRONMENT = 'ct-jenkins'
+    setEnvironmentVariables()
 
     if (build) {
       await executeOperation('build')

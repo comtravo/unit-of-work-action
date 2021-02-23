@@ -5,6 +5,7 @@ import {run} from '../src/main'
 
 describe('run tests', () => {
   beforeEach(() => {
+    process.env.GITHUB_REF = 'refs/heads/lorem/ipsum_foo+bar'
     process.env.INPUT_BUILD = 'true'
     process.env.INPUT_LINT = 'true'
     process.env.INPUT_TEST = 'true'
@@ -12,10 +13,26 @@ describe('run tests', () => {
   })
 
   afterAll(() => {
+    delete process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME
+    delete process.env.GITHUB_REF
     delete process.env.INPUT_BUILD
     delete process.env.INPUT_LINT
     delete process.env.INPUT_TEST
     delete process.env.INPUT_PUSH
+  })
+
+  test('should set the docker friendly branch name as docker tag when branch is not master', async () => {
+    await run()
+    expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual(
+      'lorem_ipsum_foo+bar'
+    )
+  })
+
+  test('should set the docker tag as latest when branch is master', async () => {
+    process.env.GITHUB_REF = 'refs/heads/master'
+
+    await run()
+    expect(process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME).toEqual('latest')
   })
 
   test('should build, lint, test, push when all options provided', async () => {
