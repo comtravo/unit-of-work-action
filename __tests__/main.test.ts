@@ -5,6 +5,8 @@ import {run, setEnvironmentVariables} from '../src/main'
 
 describe('run tests', () => {
   beforeEach(() => {
+    delete process.env.GITHUB_REF
+
     process.env.GITHUB_HEAD_REF = 'lorem/ipsum_foo+bar'
     process.env.INPUT_BUILD = 'true'
     process.env.INPUT_LINT = 'true'
