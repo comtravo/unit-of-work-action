@@ -58,7 +58,7 @@ function setEnvironmentVariables() {
         }
         const branchName = ref.split('refs/heads/')[1];
         if (!branchName) {
-            throw new Error('unable to determine branch name');
+            throw new Error(`unable to determine branch name, GITHUB_REF: ${ref}`);
         }
         const dockerFriendlyGitBranchName = branchName.replace('/', '_');
         process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = dockerFriendlyGitBranchName;
