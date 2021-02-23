@@ -49,7 +49,8 @@ function executeOperation(operation) {
 }
 function setEnvironmentVariables() {
     core.info(`current environment variables: ${JSON.stringify(process.env)}`);
-    if (process.env.GITHUB_REF === 'refs/heads/master') {
+    if (process.env.GITHUB_REF === 'refs/heads/master' ||
+        process.env.GITHUB_REF === 'refs/heads/main') {
         process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest';
     }
     else {
