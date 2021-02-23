@@ -10,6 +10,23 @@ async function executeOperation(operation: string): Promise<void> {
   core.endGroup()
 }
 
+export function setEnvironmentVariables(): void {
+  core.info(`current environment variables: ${JSON.stringify(process.env)}`)
+
+  if (process.env.GITHUB_REF === 'refs/heads/master') {
+    process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = 'latest'
+  } else {
+    const branchName = process.env.GITHUB_HEAD_REF
+
+    if (!branchName) {
+      throw new Error('GITHUB_HEAD_REF environment variable not set')
+    }
+
+    const dockerFriendlyGitBranchName = branchName.replace('/', '_')
+    process.env.DOCKERIZED_FRIENDLY_GIT_BRANCH_NAME = dockerFriendlyGitBranchName
+  }
+}
+
 export async function run(): Promise<void> {
   try {
     const build: boolean = core.getInput('build') === 'true'
@@ -17,7 +34,7 @@ export async function run(): Promise<void> {
     const test: boolean = core.getInput('test') === 'true'
     const push: boolean = core.getInput('push') === 'true'
 
-    process.env.CT_BUILD_ENVIRONMENT = 'ct-jenkins'
+    setEnvironmentVariables()
 
     if (build) {
       await executeOperation('build')
